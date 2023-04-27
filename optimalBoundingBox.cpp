@@ -6,6 +6,7 @@
 #include <CGAL/Polygon_mesh_processing/IO/polygon_mesh_io.h>
 #include <CGAL/Real_timer.h>
 #include <CGAL/Vector_3.h>
+#include <CGAL/IO/STL.h>
 
 #include <fstream>
 #include <iostream>
@@ -16,7 +17,7 @@ typedef K::Vector_3                                            Vector;
 typedef CGAL::Surface_mesh<Point>                              Surface_mesh;
 int main(int argc, char** argv)
 {
-  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/pig.off");
+  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/pig.stl");
   Surface_mesh sm;
   if(!PMP::IO::read_polygon_mesh(filename, sm) || sm.is_empty())
   {
@@ -34,9 +35,18 @@ int main(int argc, char** argv)
   Surface_mesh obb_sm;
   CGAL::make_hexahedron(obb_points[0], obb_points[1], obb_points[2], obb_points[3],
                         obb_points[4], obb_points[5], obb_points[6], obb_points[7], obb_sm);
-  std::ofstream("obb.off") << obb_sm;
+
+
+  std::ofstream("obb.ply") << obb_sm;
   PMP::triangulate_faces(obb_sm);
   std::cout << "Volume: " << PMP::volume(obb_sm) << std::endl;
+
+  //Let's save the stl file
+  std::ofstream out("obb.stl");
+  CGAL::IO::write_STL(out, obb_sm);
+  out.close();
+
+
 
   Point center ={0,0,0};
   double_t x=0,y=0,z=0;
