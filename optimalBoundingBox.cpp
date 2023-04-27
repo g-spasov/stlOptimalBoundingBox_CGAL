@@ -17,7 +17,14 @@ typedef K::Vector_3                                            Vector;
 typedef CGAL::Surface_mesh<Point>                              Surface_mesh;
 int main(int argc, char** argv)
 {
-  const std::string filename = (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/pig.stl");
+
+  if(argc <2){
+    std::cout << "Usage: " << argv[0] << " [imput mesh file]" << std::endl;
+    return EXIT_FAILURE;
+  }
+  const std::string filename =argv[1]; // (argc > 1) ? argv[1] : CGAL::data_file_path("meshes/pig.stl");
+  const std::string saveFile = filename.substr(0,filename.find("."));
+
   Surface_mesh sm;
   if(!PMP::IO::read_polygon_mesh(filename, sm) || sm.is_empty())
   {
@@ -37,16 +44,11 @@ int main(int argc, char** argv)
                         obb_points[4], obb_points[5], obb_points[6], obb_points[7], obb_sm);
 
 
-  std::ofstream("obb.ply") << obb_sm;
-  PMP::triangulate_faces(obb_sm);
-  std::cout << "Volume: " << PMP::volume(obb_sm) << std::endl;
 
-  //Let's save the stl file
+  //Let's save the stl file of the bounding box
   std::ofstream out("obb.stl");
   CGAL::IO::write_STL(out, obb_sm);
   out.close();
-
-
 
   Point center ={0,0,0};
   double_t x=0,y=0,z=0;
@@ -57,19 +59,26 @@ int main(int argc, char** argv)
     z+=obb_points[i].z();
   }
 
-  
-  center = {
-    x/8,
-    y/8,
-    z/8
-  };
-
-  std::cout << "Center: " << center << std::endl;
+  center = {x/8,y/8,z/8};
   Vector i(obb_points[0],obb_points[1]),j(obb_points[0],obb_points[3]),k(obb_points[0],obb_points[5]);
 
-  std::cout << "i: " << i << std::endl;
-  std::cout << "j: " << j << std::endl;
-  std::cout << "k: " << k << std::endl;
+  i/=2;j/=2;k/=2;
+
+  //Let us save in the saveFile the center and the vectors of the bounding box
+  //The file has the following structure
+  //name: [name of the file]
+  //center: [x] [y] [z]
+  //i: [x] [y] [z]
+  //j: [x] [y] [z]
+  //k: [x] [y] [z]
+  std::ofstream save(saveFile+".txt");
+  save << "name: " << saveFile << std::endl;
+  save << "center: " << center << std::endl;
+  save << "i: " << i << std::endl;
+  save << "j: " << j << std::endl;
+  save << "k: " << k << std::endl;
+  save.close();
+
 
   return EXIT_SUCCESS;
 }
