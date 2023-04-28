@@ -54,10 +54,11 @@ int main(int argc, char** argv)
 
   //Let's save the stl file of the bounding box
 
-  fs::current_path(fs::temp_directory_path());
-  fs::create_directories("boxes");
+  //fs::current_path(fs::temp_directory_path());
+  std::cout << "Creating directory and saving box stld " << std::endl;
+  fs::create_directories("./boxes");
 
-  std::ofstream out("boxes/"+saveFile+".stl");
+  std::ofstream out("./boxes/"+saveFile+".stl");
   CGAL::IO::write_STL(out, obb_sm);
   out.close();
 
