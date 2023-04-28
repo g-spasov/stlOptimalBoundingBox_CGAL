@@ -7,7 +7,8 @@
 #include <CGAL/Real_timer.h>
 #include <CGAL/Vector_3.h>
 #include <CGAL/IO/STL.h>
-
+#include <CGAL/boost/graph/generators.h>
+#include <CGAL/boost/graph/IO/STL.h>
 #include <iostream>
 #include <fstream>
 #include <cstdlib>
@@ -39,6 +40,8 @@ int main(int argc, char** argv)
     return EXIT_FAILURE;
   }
   CGAL::Real_timer timer;
+
+  std::cout << "Done reading the mesh" << std::endl;
   timer.start();
   // Compute the extreme points of the mesh, and then a tightly fitted oriented bounding box
   std::array<Point, 8> obb_points;
@@ -58,6 +61,7 @@ int main(int argc, char** argv)
   std::cout << "Creating directory and saving box stld " << std::endl;
   fs::create_directories("./boxes");
 
+  PMP::triangulate_faces(obb_sm);
   std::ofstream out("./boxes/"+saveFile+".stl");
   CGAL::IO::write_STL(out, obb_sm);
   out.close();
@@ -66,15 +70,15 @@ int main(int argc, char** argv)
   double_t x=0,y=0,z=0;
 
   for(int i=0;i<8;i++){
-    x+=obb_points[i].x();
-    y+=obb_points[i].y();
-    z+=obb_points[i].z();
+    x+=obb_points[i].hx();
+    y+=obb_points[i].hy();
+    z+=obb_points[i].hz();
   }
 
-  center = {x/8,y/8,z/8};
+  center = obb_points[0]; //{x/8,y/8,z/8};
   Vector i(obb_points[0],obb_points[1]),j(obb_points[0],obb_points[3]),k(obb_points[0],obb_points[5]);
 
-  i/=2;j/=2;k/=2;
+  //i/=2;j/=2;k/=2;
 
   //Let us save in the saveFile the center and the vectors of the bounding box
   //The file has the following structure
