@@ -8,13 +8,20 @@
 #include <CGAL/Vector_3.h>
 #include <CGAL/IO/STL.h>
 
-#include <fstream>
 #include <iostream>
+#include <fstream>
+#include <cstdlib>
+#include <filesystem>
+
 namespace PMP = CGAL::Polygon_mesh_processing;
 typedef CGAL::Exact_predicates_inexact_constructions_kernel    K;
 typedef K::Point_3                                             Point;
 typedef K::Vector_3                                            Vector;
 typedef CGAL::Surface_mesh<Point>                              Surface_mesh;
+
+namespace fs = std::filesystem;
+
+
 int main(int argc, char** argv)
 {
 
@@ -46,7 +53,11 @@ int main(int argc, char** argv)
 
 
   //Let's save the stl file of the bounding box
-  std::ofstream out("obb.stl");
+
+  fs::current_path(fs::temp_directory_path());
+  fs::create_directories("boxes");
+
+  std::ofstream out("boxes/"+saveFile+".stl");
   CGAL::IO::write_STL(out, obb_sm);
   out.close();
 

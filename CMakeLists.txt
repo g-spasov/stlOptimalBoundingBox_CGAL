@@ -9,6 +9,7 @@ find_package(CGAL REQUIRED)
 set(CGAL_DATA_DIR "/home/gspasov/CGAL-5.5.1/data")
 
 
+
 find_package(Eigen3 3.1.0 REQUIRED) #(3.1.0 or greater)
 include(CGAL_Eigen3_support)
 if(NOT TARGET CGAL::Eigen3_support)
@@ -18,6 +19,7 @@ if(NOT TARGET CGAL::Eigen3_support)
 endif()
 
 create_single_source_cgal_program("optimalBoundingBox.cpp")
+set_property(TARGET optimalBoundingBox PROPERTY CXX_STANDARD 17)
 
 foreach(target optimalBoundingBox)
   target_link_libraries(${target} PUBLIC CGAL::Eigen3_support)
