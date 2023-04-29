@@ -19,8 +19,14 @@ if(NOT TARGET CGAL::Eigen3_support)
 endif()
 
 create_single_source_cgal_program("optimalBoundingBox.cpp")
+create_single_source_cgal_program("capStlOfOBB.cpp")
 set_property(TARGET optimalBoundingBox PROPERTY CXX_STANDARD 17)
+set_property(TARGET capStlOfOBB PROPERTY CXX_STANDARD 17)
 
 foreach(target optimalBoundingBox)
+  target_link_libraries(${target} PUBLIC CGAL::Eigen3_support)
+endforeach()
+
+foreach(target capStlOfOBB)
   target_link_libraries(${target} PUBLIC CGAL::Eigen3_support)
 endforeach()
