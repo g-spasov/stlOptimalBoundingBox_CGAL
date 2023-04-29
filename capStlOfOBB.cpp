@@ -13,7 +13,7 @@
 #include <fstream>
 #include <cstdlib>
 #include <filesystem>
-
+#include <CGAL/Aff_transformation_3.h>
 namespace PMP = CGAL::Polygon_mesh_processing;
 typedef CGAL::Exact_predicates_inexact_constructions_kernel    K;
 typedef K::Point_3                                             Point;
@@ -50,6 +50,15 @@ int main(int argc, char** argv)
   std::cout << "Elapsed time: " << timer.time() << std::endl;
   // Make a mesh out of the oriented bounding box
   Surface_mesh cap1,cap2,cap3,cap4,cap5,cap6;
+
+  CGAL::Scaling S;
+  CGAL::Aff_transformation_3<K> T(S,1e-3,1.0);
+  //S(1e-3,1.0);
+  //T(	1e-3,0,0,0, 0,1e-3,0,0,0,0,1e-3,0,1);
+
+for(int i=0;i<8;i++){
+  obb_points[i]=obb_points[i].transform(T);
+}
 
   CGAL::make_quad(obb_points[0], obb_points[1], obb_points[2], obb_points[3], cap1);
   CGAL::make_quad(obb_points[4], obb_points[5], obb_points[6], obb_points[7], cap2);
